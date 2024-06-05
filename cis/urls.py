@@ -6,9 +6,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
 
-    path('cis/admin/', admin.site.urls),
+    path('cis/cis/admin/', admin.site.urls),
     
-    path('cis/', include('city_school.urls')),
+    path('cis/cis/', include('city_school.urls')),
     
     path('', include('pwa.urls')),
     

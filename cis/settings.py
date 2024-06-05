@@ -72,9 +72,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cis.wsgi.application'
 
-STATIC_URL = "/cis/static/"
+STATIC_URL = "/cis/cis/static/"
 STATICFILES_DIRS = [
-    BASE_DIR / "static"
+    BASE_DIR / "cis/static"
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
