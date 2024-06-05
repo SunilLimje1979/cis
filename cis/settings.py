@@ -72,6 +72,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cis.wsgi.application'
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    'https://www.mispack.in' ]
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'https://www.mispack.in' ]
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:8000',
+    'https://www.mispack.in' ]
+
+
 STATIC_URL = "/cis/cis/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "cis/static"
