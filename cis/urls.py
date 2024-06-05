@@ -12,4 +12,6 @@ urlpatterns = [
     
     path('', include('pwa.urls')),
     
+    #  path('', include('pwa.urls')),
+    
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
