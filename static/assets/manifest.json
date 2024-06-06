@@ -1,17 +1,17 @@
 {
-    "name": "School",
-    "short_name": "School",
-    "description": "school Web App",
+    "name": "City School",
+    "short_name": "cis",
+    "description": "Cis Web App",
     "dir": "auto",
     "lang": "en-US",
     "display": "standalone",
     "orientation": "any",
-    "start_url": "/school/login/",
+    "start_url": "/cis/login/",
     "background_color": "#f2f5f3",
     "theme_color": "#34eb4c",
     "icons": [
         {
-        "src": "/school/static/assets/img/icon.png",
+        "src": "/cis/static/assets/img/icon.png",
         "sizes": "512x512",
         "type": "image/png"
     }

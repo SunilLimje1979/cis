@@ -83,7 +83,7 @@ CORS_ORIGIN_WHITELIST = [
     'https://www.mispack.in' ]
 
 
-STATIC_URL = "/cis/cis/static/"
+STATIC_URL = "/cis/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "cis/static"
 ]

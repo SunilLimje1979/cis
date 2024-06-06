@@ -554,8 +554,6 @@ def Circular(request):
         return render(request, 'error.html', {'message': f'Error: {e}'})
 
 ##################################### Assigment page ##################################################################
-
-
 def Assignment(request):
     # Retrieve student data from session
     student_data = request.session.get('student_data', {})
@@ -573,7 +571,7 @@ def Assignment(request):
     api_params_circulars = {
         "custid": student_data['1']['custid'],
         "grno": student_data['1']['grnno'],
-        "type": "CIRCULAR",
+        "type": "HOMEWORK",
         "classid": student_data['1']['classid'],
         "divid": student_data['1']['division'],
         "access": "Parent",
@@ -594,23 +592,21 @@ def Assignment(request):
 
             # Extract circulars from the response
             circulars = [{
-                "type": data_circulars['response'][key]['type'],
-                'date': data_circulars['response'][key]['date'],
-                'description': data_circulars['response'][key]['description'],
-                'pdf_link': f"https://www.mispack.in/app/application/main/{data_circulars['response'][key]['uid']}"
-            } for key in data_circulars.get('response', {}).keys()]
-
+                "type": item['type'],
+                'date': item['date'],
+                'description': item['description'],
+                'pdf_link': f"https://www.mispack.in/app/application/main/{item['uid']}"
+            } for item in data_circulars.get('response', [])]
 
             # Prepare the context to pass to the template
             context = {'circulars': circulars}
 
             # Send POST request to update message count API
             api_params_update_message_count = {
-                "type": "ATTENDANCE",
+                "type": "HOMEWORK",
                 "contact": mobile_number,
                 "adminno": adminno
             }
-            # print(api_params_update_message_count)
             
             api_url_update_message_count = "https://mispack.in/app/admin/public/updatemessagecount"
             
@@ -977,9 +973,13 @@ def Media(request):
 
 def Pdf(request):
     pdf_link = request.GET.get('pdf_link', '')  # Get the PDF link from the query parameters
-    description = request.GET.get('description', '')  # Get the description from the query parameters
+    description = request.GET.get('description', '')
+    # Split the description into lines based on "00"
+    description_lines = description.split('.00')
+    # Join the lines back together with a line break
+    modified_description = '\n'.join(description_lines) # Get the description from the query parameters
     circular_type = request.GET.get('type', '')  # Get the type from the query parameters
-    return render(request, 'city_school/pdf.html', {'pdf_link': pdf_link, 'description': description, 'type': circular_type})
+    return render(request, 'city_school/pdf.html', {'pdf_link': pdf_link, 'description': modified_description, 'type': circular_type})
 
 
 ##################################### Photo Page ##################################################################

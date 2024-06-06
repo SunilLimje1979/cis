@@ -1,4 +1,4 @@
-var staticCacheName = 'school-v1';
+var staticCacheName = 'cis-v1';
 
 self.addEventListener('install', function(event) {
     event.waitUntil(
