@@ -1075,6 +1075,6 @@ def Imagespecific(request):
 ##################################### Imagespecific Page ##################################################################
 def Logout(request):
     # Clear all sessions
-    request.session.clear()
+    # request.session.clear()
     # Redirect to the login page
     return redirect('login')
