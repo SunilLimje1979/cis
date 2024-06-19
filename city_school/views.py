@@ -203,7 +203,7 @@ def My_students(request):
                     api_data = response.json()
                     students = api_data.get('data', {}).values()  # Get the list of students
                     
-                    # print(students)
+                    print(students)
 
                     # Pass the student data to the template for rendering
                     return render(request, 'city_school/my_student.html', {'students': students})
@@ -554,6 +554,10 @@ def Circular(request):
         return render(request, 'error.html', {'message': f'Error: {e}'})
 
 ##################################### Assigment page ##################################################################
+import requests
+from django.shortcuts import render
+from django.http import HttpResponse
+
 def Assignment(request):
     # Retrieve student data from session
     student_data = request.session.get('student_data', {})
@@ -591,12 +595,14 @@ def Assignment(request):
             data_circulars = response_circulars.json()
 
             # Extract circulars from the response
-            circulars = [{
-                "type": item['type'],
-                'date': item['date'],
-                'description': item['description'],
-                'pdf_link': f"https://www.mispack.in/app/application/main/{item['uid']}"
-            } for item in data_circulars.get('response', [])]
+            circulars = []
+            for key, item in data_circulars.get('response', {}).items():
+                circulars.append({
+                    "type": item['type'],
+                    'date': item['date'],
+                    'description': item['description'],
+                    'pdf_link': f"https://www.mispack.in/app/application/main/{item['uid']}"
+                })
 
             # Prepare the context to pass to the template
             context = {'circulars': circulars}
@@ -621,6 +627,7 @@ def Assignment(request):
     except requests.exceptions.RequestException as e:
         # Handle connection or request errors
         return render(request, 'error.html', {'message': f'Error: {e}'})
+
 
 
 ##################################### Event Page ##################################################################
@@ -774,7 +781,7 @@ def Examination(request):
     api_params_circulars = {
         "custid": student_data['1']['custid'],
         "grno": student_data['1']['grnno'],
-        "type": "CIRCULAR",
+        "type": "EXAMINATION",
         "classid": student_data['1']['classid'],
         "divid": student_data['1']['division'],
         "access": "Parent",
@@ -795,12 +802,11 @@ def Examination(request):
 
             # Extract circulars from the response
             circulars = [{
-                "type": data_circulars['response'][key]['type'],
-                'date': data_circulars['response'][key]['date'],
-                'description': data_circulars['response'][key]['description'],
-                'pdf_link': f"https://www.mispack.in/app/application/main/{data_circulars['response'][key]['uid']}"
-            } for key in data_circulars.get('response', {}).keys()]
-
+                "type": item['type'],
+                'date': item['date'],
+                'description': item['description'],
+                'pdf_link': f"https://www.mispack.in/app/application/main/{item['uid']}"
+            } for item in data_circulars.get('response', [])]
 
             # Prepare the context to pass to the template
             context = {'circulars': circulars}
@@ -862,15 +868,28 @@ def Fees(request):
         # Check if the request was successful (status code 200)
         if response_circulars.status_code == 200:
             # Parse the JSON response for circulars
+            # Parse the JSON response for circulars
             data_circulars = response_circulars.json()
 
-            # Extract circulars from the response
-            circulars = [{
-                "type": circular['type'],
-                'date': circular['date'],
-                'description': circular['description'],
-                # 'pdf_link': f"https://www.mispack.in/app/application/main/{circular['uid']}"
-            } for circular in data_circulars.get('response', [])]
+            # Initialize an empty list to store circulars
+            circulars = []
+
+            # Check if 'response' is a list (second response structure)
+            if isinstance(data_circulars.get('response'), list):
+                circulars = [{
+                    "type": circular['type'],
+                    'date': circular['date'],
+                    'description': circular['description'],
+                    # 'pdf_link': f"https://www.mispack.in/app/application/main/{circular['uid']}"
+                } for circular in data_circulars['response']]
+            else:
+                # Assume 'response' is a dictionary with numeric keys (first response structure)
+                circulars = [{
+                    "type": data_circulars['response'][key]['type'],
+                    'date': data_circulars['response'][key]['date'],
+                    'description': data_circulars['response'][key]['description'],
+                    # 'pdf_link': f"https://www.mispack.in/app/application/main/{data_circulars['response'][key]['uid']}"
+                } for key in data_circulars['response']]
 
             # Prepare the context to pass to the template
             context = {'circulars': circulars}
@@ -937,15 +956,31 @@ def Media(request):
             data_circulars = response_circulars.json()
 
             # Extract circulars from the response
-            circulars = [{
-                "type": circular['type'],
-                'date': circular['date'],
-                'description': circular['description'],
-                'pdf_link': f"https://www.mispack.in/app/application/main/{circular['uid']}"
-            } for circular in data_circulars.get('response', [])]
+            
+                        # Extract circulars from the response
+            if isinstance(data_circulars.get('response'), dict):
+                # Case when response is a dictionary with string keys
+                circulars = [{
+                    "type": circular['type'],
+                    'date': circular['date'],
+                    'description': circular['description'],
+                    'pdf_link': f"https://www.mispack.in/app/application/main/{circular['uid']}"
+                } for circular in data_circulars['response'].values()]
+            elif isinstance(data_circulars.get('response'), list):
+                # Case when response is a list of dictionaries
+                circulars = [{
+                    "type": circular['type'],
+                    'date': circular['date'],
+                    'description': circular['description'],
+                    'pdf_link': f"https://www.mispack.in/app/application/main/{circular['uid']}"
+                } for circular in data_circulars['response']]
+            else:
+                # Handle case when response is empty or unexpected format
+                circulars = []
 
             # Prepare the context to pass to the template
             context = {'circulars': circulars}
+
 
             # Send POST request to update message count API
             api_params_update_message_count = {
@@ -1040,6 +1075,6 @@ def Imagespecific(request):
 ##################################### Imagespecific Page ##################################################################
 def Logout(request):
     # Clear all sessions
-    request.session.clear()
+    # request.session.clear()
     # Redirect to the login page
     return redirect('login')

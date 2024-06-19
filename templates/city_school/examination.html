@@ -1,4 +1,3 @@
-
 {% load static %}
 {% load pwa %} 
 {% comment %} {% progressive_web_app_meta %} {% endcomment %}
@@ -8,7 +7,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="manifest" href="{% static "assets/manifest.json" %}">
+<link rel="manifest" href="{% static "assets/manifest.json" %}">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>User Profile</title>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -43,7 +42,6 @@
     list-style-type: none;
     padding: 0px;
     padding-top: 50px;
-    
   }
 
   .user-item {
@@ -52,8 +50,7 @@
     padding-right: 4px; /* Add padding to the right */
     border-radius: 8px; /* Add border radius */
     border-bottom: 1px solid rgba(204, 204, 204, 0.9); /* Add bottom border with faint color */
-}
-
+  }
 
   .user-info {
     display: flex; /* Use flexbox */
@@ -91,7 +88,18 @@
     font-weight: bold;
     padding:0;
     margin-bottom: 25px;
+  }
 
+  /* Remove underline from anchor tags */
+  .user-item a {
+    text-decoration: none;
+    color: inherit; /* Ensures anchor tag inherits text color */
+  }
+
+  /* Style anchor tag on hover if needed */
+  .user-item a:hover {
+    text-decoration: none;
+    color: inherit;
   }
 
 </style>
@@ -111,21 +119,21 @@
       <!-- Loop over circulars -->
       {% for circular in circulars %}
       <li class="user-item">
+        <a href="{% url 'pdf' %}?pdf_link={{ circular.pdf_link }}&description={{ circular.description }}&type={{ circular.type }}" >
           <div class="user-info">
               <div class="book-icon">
-    
                   <i class="fas fa-file-alt" style="color: white; background-color: rgb(237, 112, 20); width: 40px; height: 40px; display: inline-block; text-align: center; line-height: 30px; font-size: 24px; padding: 5px;"></i>
               </div>
               <div class="user-date">{{ circular.date }}</div>
 
-              <a href="{% url 'pdf' %}?pdf_link={{ circular.pdf_link }}&description={{ circular.description }}&type={{ circular.type }}" class="pdf-icon">
+              <div class="pdf-icon">
                 <i class="far fa-file-pdf"></i> <!-- PDF icon -->
-            </a>
-
+              </div>
           </div>
           <div class="description">
               {{ circular.description }}
-          </div>
+          </div> 
+        </a>
       </li>
       {% endfor %}
       <!-- End loop -->
