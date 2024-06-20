@@ -1078,3 +1078,9 @@ def Logout(request):
     # request.session.clear()
     # Redirect to the login page
     return redirect('login')
+
+
+
+##################################### PDF DEMO ##################################################################
+def pdfdemo(request):
+    return render(request,'city_school/pdfdemo.html')
