@@ -104,7 +104,7 @@
   <ul class="user-list">
     <!-- Loop over circulars -->
     {% for circular in circulars %}
-    <li class="user-item">
+    <li class="user-item" id="pdf-icon-{{ forloop.counter }}">
       <div class="user-info">
         <div class="book-icon">
           <i class="fas fa-book-open" style="color: white; background-color: rgb(237, 112, 20); width: 40px; height: 40px; display: inline-block; text-align: center; line-height: 30px; font-size: 24px; padding: 5px;"></i>
@@ -112,7 +112,7 @@
         <div class="user-date">{{ circular.date }}</div>
 
         <!-- Replace anchor tag with a span or div for PDF icon -->
-        <div id="pdf-icon-{{ forloop.counter }}" class="pdf-icon">
+        <div class="pdf-icon">
           <i class="far fa-file-pdf"></i>
         </div>
       </div>
