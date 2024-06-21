@@ -29,7 +29,7 @@
 
   .navbar {
     padding: 4px 0; /* Adjust the top and bottom padding as needed */
-    padding-left:10px;
+    padding-left: 10px;
   }
 
   .nav_text {
@@ -73,11 +73,12 @@
     padding-top: 15px;
   }
 
-  .pdf-icon {
+  .pdf-icon, .video-icon {
     color: rgba(0, 0, 0, 0.7); /* Faint black color */
     font-size: 34px; /* Increase icon size */
-    margin-left: auto; /* Align the PDF icon to the right */
+    margin-left: auto; /* Align the PDF and video icons to the right */
     margin-bottom: 0px; /* Add bottom margin */
+    cursor: pointer; /* Add cursor pointer for better UX */
   }
 
   .description {
@@ -106,39 +107,51 @@
 </head>
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: rgb(57,159,34);">
-    <a class="navbar-brand" href="{% url 'dashboard' %}">
-      <i class="fa fa-arrow-left" aria-hidden="true"></i>
-      {% comment %} <span class="nav_text" style="font-weight: bold;">{{ circulars.0.type|title|upper }}</span> <!-- Convert to uppercase --> {% endcomment %}
-      <span class="nav_text" style="font-weight: bold;">MEDIA</span>
-    </a>
-  </nav>
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: rgb(57,159,34);">
+  <a class="navbar-brand" href="{% url 'dashboard' %}">
+    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+    <span class="nav_text" style="font-weight: bold;">MEDIA</span>
+  </a>
+</nav>
 
 <div class="container">
   <ul class="user-list">
-      <!-- Loop over circulars -->
-      {% for circular in circulars %}
-      <li class="user-item">
-        <a href="{% url 'pdf' %}?pdf_link={{ circular.pdf_link }}&description={{ circular.description }}&type={{ circular.type }}">
-          <div class="user-info">
-              <div class="book-icon">
-                <i class="fas fa-file-video" style="color: white; background-color: rgb(237, 112, 20); width: 40px; height: 40px; display: inline-block; text-align: center; line-height: 30px; font-size: 24px; padding: 5px;"></i><!-- Open book icon -->
-              </div>
-              <div class="user-date">{{ circular.date }}</div>
-              <div class="pdf-icon">
-                <i class="far fa-file-pdf"></i> <!-- PDF icon -->
-              </div>
-          </div>
-          <div class="description">
-              {{ circular.description }}
-          </div>
-        </a>
-      </li>
-      {% endfor %}
-      <!-- End loop -->
+    <!-- Loop over circulars -->
+    {% for circular in circulars %}
+    <li class="user-item" onclick="downloadPDF('{{ circular.pdf_link }}')">
+      <div class="user-info">
+        <div class="book-icon">
+          <i class="fas fa-file-video" style="color: white; background-color: rgb(237, 112, 20); width: 40px; height: 40px; display: inline-block; text-align: center; line-height: 30px; font-size: 24px; padding: 5px;"></i><!-- Video file icon -->
+        </div>
+        <div class="user-date">{{ circular.date }}</div>
+        <div class="pdf-icon">
+          <i class="far fa-file-pdf" ></i> <!-- PDF file icon -->
+        </div>
+      </div>
+      <div class="description">
+        {{ circular.description }}
+      </div>
+    </li>
+    {% endfor %}
+    <!-- End loop -->
   </ul>
 </div>
 
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script>
+  function downloadPDF(pdfLink) {
+    // Display alert message before download
+    alert("Your download will start now.");
+
+    // Create an <a> element to trigger the download
+    const link = document.createElement("a");
+    link.href = pdfLink;
+    link.download = "document.pdf"; // Specify the filename here
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+</script>
+
 </body>
 </html>
