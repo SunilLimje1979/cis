@@ -77,7 +77,19 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            alert("Your download will start now.");
     
+            const pdfUrl = "{{ image_url }}";
+            const link = document.createElement("a");
+            link.href = pdfUrl;
+            link.download = "photo.JPG"; // specify the filename
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    </script>
     <script>
         var canvas = document.getElementById('zoomable-canvas');
         var ctx = canvas.getContext('2d');
