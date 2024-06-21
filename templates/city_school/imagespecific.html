@@ -70,6 +70,12 @@
             text-decoration: none;
             z-index: 1000;
         }
+
+        .download-btn:focus, .download-btn:active {
+            text-decoration: none; /* Remove text underline */
+            background-color: #28a745; /* Maintain the same background color */
+            color: white; /* Maintain text color */
+        }
     </style>
 </head>
 <body>
@@ -85,7 +91,7 @@
         {% if image_url %}
             <canvas id="zoomable-canvas"></canvas>
             <img id="zoomable-image" src="{{ image_url }}" alt="Specific Image">
-            <button class="btn btn-primary download-btn" id="download-btn">Download Image</button>
+            <button class="btn btn-success download-btn" id="download-btn">Download Image</button>
         {% else %}
             <p>No image to display.</p>
         {% endif %}
