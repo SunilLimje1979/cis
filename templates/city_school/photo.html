@@ -127,12 +127,17 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
+                   
                 </div>
-                <a href="#" id="download-button" class="download-button">Download All</a>
+                  <!-- Note for zooming and downloading -->
+                  <p style="font-size: 14px; position: fixed; margin-top: 60px;">
+                    <strong>Note:</strong> Tab or Click on image to Zoom and Download
+                </p>
+                {% comment %} <a href="#" id="download-button" class="download-button">Download All</a> {% endcomment %}
             </div>
         </div>
     </div>
-    <script>
+    {% comment %} <script>
         // Function to handle download of each image separately
         function downloadImage(imageUrl) {
             // Proxy server URL
@@ -175,7 +180,7 @@
                 downloadImage(imageUrl);
             });
         });
-    </script>
+    </script> {% endcomment %}
 
 
 
