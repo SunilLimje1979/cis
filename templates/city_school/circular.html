@@ -144,19 +144,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
   $(document).ready(function() {
-    // Function to handle PDF download on icon click
     {% for circular in circulars %}
     $('#pdf-icon-{{ forloop.counter }}').on('click', function() {
-      // Alert and start download
-      alert("Your download will start now.");
-
       const pdfUrl = "{{ circular.pdf_link }}";
-      const link = document.createElement("a");
-      link.href = pdfUrl;
-      link.download = "school.pdf"; // specify the filename
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const fileExtension = pdfUrl.split('.').pop().toLowerCase();
+
+      if (fileExtension === 'pdf') {
+        // Direct download for PDF files
+        alert("Your download will start now.");
+        const link = document.createElement("a");
+        link.href = pdfUrl;
+        link.download = "school.pdf"; // specify the filename
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        // Handle navigation for other file types (assuming it's an image)
+        window.location.href = "{% url 'photo' circular.id %}";
+      }
     });
     {% endfor %}
 

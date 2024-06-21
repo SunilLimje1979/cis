@@ -522,13 +522,14 @@ def Circular(request):
             
             # Extract circulars from the response
             circulars = [{
+                "id":data_circulars['response'][key]['id'],
                 "type": data_circulars['response'][key]['type'],
                 'date': data_circulars['response'][key]['date'],
                 'description': data_circulars['response'][key]['description'],
                 'pdf_link': f"https://www.mispack.in/app/application/main/{data_circulars['response'][key]['uid']}"
             } for key in data_circulars.get('response', {}).keys()]
 
-
+            # print(circulars)
             # Prepare the context to pass to the template
             context = {'circulars': circulars}
 
@@ -1018,12 +1019,13 @@ def Pdf(request):
 
 
 ##################################### Photo Page ##################################################################
+import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 # Suppress SSL warnings
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
 def Photo(request, circular_id):
-    # print("Received Circular ID:", circular_id)
-    
     # API endpoint for fetching post details
     post_api_url = "https://mispack.in/app/admin/public/getpost"
     # Parameters for the API request
@@ -1032,11 +1034,6 @@ def Photo(request, circular_id):
     # Make GET request to the API with SSL certificate verification disabled
     response = requests.post(post_api_url, json=payload, verify=False)
     
-    # print(response.json())
-    
-    # Print the response content
-    # print("Response Content:", response.content)
-
     # Extract image URLs and description from the response
     try:
         data = response.json()
@@ -1044,10 +1041,17 @@ def Photo(request, circular_id):
             post = data['response'][0]
             description = post.get('description', '')  # Get description from API response
             image_urls = []
-            for image_array in post.get('image_array', []):
-                image_url = f"https://www.mispack.in/app/application/main/{image_array['image']}"
-                image_urls.append(image_url)
-            # print(image_urls)
+            image_array = post.get('image_array', [])
+            if image_array:
+                for image_info in image_array:
+                    image_url = f"https://www.mispack.in/app/application/main/{image_info['image']}"
+                    image_urls.append(image_url)
+            else:
+                # If image_array is null, handle the single image case
+                image_uid = post.get('uid', '')
+                if image_uid:
+                    image_url = f"https://www.mispack.in/app/application/main/{image_uid}"
+                    image_urls.append(image_url)
         else:
             # Handle the case when there's no response or no images found
             description = ''  # If no response or description is found, set to empty string
@@ -1057,8 +1061,10 @@ def Photo(request, circular_id):
         description = ''  # Set description to empty string in case of exception
         image_urls = []
 
+    context = {'image_urls': image_urls, 'description': description, 'circular_id': circular_id}
+    # print(context)
     # Render the template with the retrieved image URLs and description
-    return render(request, 'city_school/photo.html', {'image_urls': image_urls, 'description': description, 'circular_id': circular_id})
+    return render(request, 'city_school/photo.html', context)
 
 
 
