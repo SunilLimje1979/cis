@@ -85,8 +85,8 @@ CORS_ORIGIN_WHITELIST = [
 
 STATIC_URL = "/cis/static/"
 STATICFILES_DIRS = [
-   BASE_DIR / "cis/static"
-    #  BASE_DIR / "static"
+    #BASE_DIR / "cis/static"
+    BASE_DIR / "static"
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
