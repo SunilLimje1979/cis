@@ -1083,7 +1083,7 @@ def Logout(request):
     # Clear all sessions
     # request.session.clear()
     # Redirect to the login page
-    return redirect('login')
+    return redirect('exit')
 
 
 
