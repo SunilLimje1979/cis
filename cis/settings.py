@@ -88,6 +88,7 @@ STATICFILES_DIRS = [
     #BASE_DIR / "cis/static"
     BASE_DIR / "static"
 ]
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_IMG_ROOT = os.path.join(BASE_DIR, 'static')
