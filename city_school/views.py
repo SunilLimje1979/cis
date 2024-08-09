@@ -183,12 +183,6 @@ def DashboardPage(request):
     
     return render(request, 'city_school/dashboard.html', {'first_name': first_name, 'last_name': last_name, 'notification_counts': notification_counts})
 
-
-##################################### Pending Acceptance ##################################################################
-
-def Pending_acceptance(request):
-    return render(request,'city_school/pending_acceptance.html')
-
 ##################################### My Student Page ##################################################################
 
 def My_students(request):
