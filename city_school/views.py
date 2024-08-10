@@ -1123,7 +1123,7 @@ def Pending_acceptance(request):
 
     # API parameters for circulars
     api_params_circulars = {
-        "mobile": mobile_number
+        "mobile": 8600672101
     }
     
     # API endpoint for circulars
@@ -1138,27 +1138,31 @@ def Pending_acceptance(request):
             # Parse the JSON response for circulars
             data_circulars = response_circulars.json()
 
+            # Check if the response indicates no data found
+            response_content = data_circulars.get('response', [])
+            if isinstance(response_content, str) and response_content.startswith("not found"):
+                messages.error(request, "NO DATA FOUND")
+                return render(request, 'city_school/pending_acceptance.html', {'circulars': []})
+
             # Extract circulars from the response
             circulars = [{
-                "id":circular['id'],
+                "id": circular['id'],
                 "type": circular['type'],
                 'date': circular['date'],
                 'flag': circular['flag'],
                 'description': circular['description'],
                 'pdf_link': f"https://www.mispack.in/app/application/main/{circular['uid']}"
-            } for circular in data_circulars.get('response', [])]
+            } for circular in response_content]
 
             # Prepare the context to pass to the template
             context = {'circulars': circulars}
-            # print(context)
+
             # Send POST request to update message count API
             api_params_update_message_count = {
                 "type": "events",
                 "contact": mobile_number,
                 "adminno": adminno
             }
-           
-            # print(api_params_update_message_count)
             
             api_url_update_message_count = "https://mispack.in/app/admin/public/updatemessagecount"
             
@@ -1173,7 +1177,6 @@ def Pending_acceptance(request):
     except requests.exceptions.RequestException as e:
         # Handle connection or request errors
         return render(request, 'error.html', {'message': f'Error: {e}'})
-    
 
 ########################################## Acceptance Update ########################################
 def accept_pa(request):
