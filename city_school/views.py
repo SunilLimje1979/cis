@@ -1123,7 +1123,7 @@ def Pending_acceptance(request):
 
     # API parameters for circulars
     api_params_circulars = {
-        "mobile": 8600672101
+        "mobile": mobile_number
     }
     
     # API endpoint for circulars
