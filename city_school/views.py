@@ -397,6 +397,10 @@ def Profile(request):
 #         return render(request, 'error.html', {'message': f'Error: {e}'})
 
 
+import requests
+from django.shortcuts import render
+from django.contrib import messages
+
 def Attendance(request):
     try:
         # Retrieve student data from session
@@ -428,20 +432,20 @@ def Attendance(request):
         # Make a POST request to fetch circulars data with SSL verification bypassed
         response_circulars = requests.post(api_url_circulars, json=api_params_circulars, verify=False)
         
-        # print(response_circulars.json().get('response'))
-
         # Check if the request was successful (status code 200)
         if response_circulars.json().get('response'):
             # Parse the JSON response for circulars
             data_circulars = response_circulars.json()
 
             # Extract circulars from the response
-            circulars = [{
-                "type": circular['type'],
-                'date': circular['date'],
-                'description': circular['description'],
-                'pdf_link': f"https://www.mispack.in/app/application/main/{circular['uid']}"
-            } for circular in data_circulars.get('response', [])]
+            circulars = []
+            for key, circular in data_circulars.get('response', {}).items():
+                circulars.append({
+                    "type": circular['type'],
+                    'date': circular['date'],
+                    'description': circular['description'],
+                    'pdf_link': f"https://www.mispack.in/app/application/main/{circular['uid']}"
+                })
 
             # Prepare the context to pass to the template
             context = {'circulars': circulars}
@@ -462,13 +466,13 @@ def Attendance(request):
             return render(request, 'city_school/attendance.html', context)
         else:
             # Handle errors, for example, by returning an error page
-            # return HttpResponse("Error occurred while fetching data from the API")
             messages.error(request, "NO DATA FOUND")
             return render(request, 'city_school/attendance.html')
         
     except requests.exceptions.RequestException as e:
         # Handle connection or request errors
         return render(request, 'error.html', {'message': f'Error: {e}'})
+
 
 
 
