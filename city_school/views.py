@@ -428,7 +428,7 @@ def Attendance(request):
     try:
         # Retrieve student data from session
         student_data = request.session.get('student_data', {})
-       
+
         # Extract mobile number and adminno
         mobile_number = ''
         adminno = ''
@@ -448,34 +448,44 @@ def Attendance(request):
             "access": "Parent",
             "mobile": mobile_number
         }
-        
-        # print(api_params_circulars)
-        
+
         # API endpoint for circulars
         api_url_circulars = "https://mispack.in/app/admin/public/gettype"
 
         # Make a POST request to fetch circulars data with SSL verification bypassed
         response_circulars = requests.post(api_url_circulars, json=api_params_circulars, verify=False)
-        
-        # Check if the request was successful (status code 200)
-        if response_circulars.json().get('response'):
-            # Parse the JSON response for circulars
-            data_circulars = response_circulars.json()
+        response_json = response_circulars.json()
 
-            # Extract circulars from the response
+        # Check if the response contains 'response' key
+        if 'response' in response_json:
+            data_circulars = response_json.get('response', None)
             circulars = []
-            for key, circular in data_circulars.get('response', {}).items():
-                circulars.append({
-                    "type": circular['type'],
-                    'date': circular['date'],
-                    'description': circular['description'],
-                    'pdf_link': f"https://www.mispack.in/app/application/main/{circular['uid']}"
-                })
+
+            if not data_circulars:  # Check if data_circulars is None or empty
+                messages.error(request, "NO DATA FOUND")
+                return render(request, 'city_school/attendance.html', {'circulars': []})
+
+            if isinstance(data_circulars, list):
+                # Handle the new API response structure where 'response' is a list
+                for item in data_circulars:
+                    circulars.append({
+                        "type": item.get('type', 'attendance'),
+                        'date': item.get('date', ''),
+                        'description': item.get('description', ''),
+                        'pdf_link': f"https://www.mispack.in/app/application/main/{item.get('uid', '')}"
+                    })
+            elif isinstance(data_circulars, dict):
+                # Handle the original API response structure where 'response' is a dictionary
+                for key, circular in data_circulars.items():
+                    circulars.append({
+                        "type": circular.get('type', 'attendance'),
+                        'date': circular.get('date', ''),
+                        'description': circular.get('description', ''),
+                        'pdf_link': f"https://www.mispack.in/app/application/main/{circular.get('uid', '')}"
+                    })
 
             # Prepare the context to pass to the template
             context = {'circulars': circulars}
-            
-            # print(context)
 
             # Send POST request to update message count API
             api_params_update_message_count = {
@@ -483,10 +493,8 @@ def Attendance(request):
                 "contact": mobile_number,
                 "adminno": adminno
             }
-        
+
             api_url_update_message_count = "https://mispack.in/app/admin/public/updatemessagecount"
-            
-            # Make a POST request to update message count with SSL verification bypassed
             requests.post(api_url_update_message_count, json=api_params_update_message_count, verify=False)
 
             # Render the template with the context
@@ -495,15 +503,14 @@ def Attendance(request):
             # Handle errors, for example, by returning an error page
             messages.error(request, "NO DATA FOUND")
             return render(request, 'city_school/attendance.html')
-        
+
     except requests.exceptions.RequestException as e:
         # Handle connection or request errors
         return render(request, 'error.html', {'message': f'Error: {e}'})
 
-
-
-
-
+    
+    
+    
 ##################################### Circular Page ##################################################################
 
 def Circular(request):
