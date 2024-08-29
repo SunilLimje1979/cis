@@ -1219,7 +1219,7 @@ def Pending_acceptance(request):
     # Extract mobile number and adminno
     mobile_number = ''
     adminno = ''
-    for key, data in student_data.items():
+    for data in student_data:
         mobile_number = data.get('contact', '')
         adminno = data.get('adminno', '')
         if mobile_number and adminno:
