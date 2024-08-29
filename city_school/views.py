@@ -1255,15 +1255,19 @@ def Pending_acceptance(request):
                 messages.error(request, "NO DATA FOUND")
                 return render(request, 'city_school/pending_acceptance.html', {'circulars': []})
 
-            # Extract circulars from the response
-            circulars = [{
-                "id": circular['id'],
-                "type": circular['type'],
-                'date': circular['date'],
-                'flag': circular['flag'],
-                'description': circular['description'],
-                'pdf_link': f"https://www.mispack.in/app/application/main/{circular['uid']}"
-            } for circular in response_content]
+            # Ensure response_content is a list before iterating
+            if isinstance(response_content, list):
+                # Extract circulars from the response
+                circulars = [{
+                    "id": circular['id'],
+                    "type": circular['type'],
+                    'date': circular['date'],
+                    'flag': circular['flag'],
+                    'description': circular['description'],
+                    'pdf_link': f"https://www.mispack.in/app/application/main/{circular['uid']}"
+                } for circular in response_content]
+            else:
+                circulars = []  # Handle cases where response_content is not a list
 
             # Prepare the context to pass to the template
             context = {'circulars': circulars}
@@ -1288,6 +1292,7 @@ def Pending_acceptance(request):
     except requests.exceptions.RequestException as e:
         # Handle connection or request errors
         return render(request, 'error.html', {'message': f'Error: {e}'})
+
 
 ########################################## Acceptance Update ########################################
 def accept_pa(request):
