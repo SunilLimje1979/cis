@@ -600,12 +600,10 @@ def Circular(request):
 import requests
 from django.shortcuts import render
 from django.http import HttpResponse
-
 def Assignment(request):
     # Retrieve student data from session
     student_data = request.session.get('student_data', {})
-   
-    # print("601",student_data)
+
     # Extract mobile number and adminno
     mobile_number = ''
     adminno = ''
@@ -616,6 +614,8 @@ def Assignment(request):
             break  # Stop looping if both mobile number and adminno are found
 
     # API parameters for circulars
+  
+    
     api_params_circulars = {
         "custid": student_data[0]['custid'],
         "grno": student_data[0]['grnno'],
@@ -625,6 +625,7 @@ def Assignment(request):
         "access": "Parent",
         "mobile": mobile_number
     }
+    print(api_params_circulars)
     
     # API endpoint for circulars
     api_url_circulars = "https://mispack.in/app/admin/public/gettype"
@@ -632,35 +633,45 @@ def Assignment(request):
     try:
         # Make a POST request to fetch circulars data with SSL verification bypassed
         response_circulars = requests.post(api_url_circulars, json=api_params_circulars, verify=False)
-        # print(response_circulars.text)
         # Check if the request was successful (status code 200)
         if response_circulars.status_code == 200:
             # Parse the JSON response for circulars
             data_circulars = response_circulars.json()
 
-            # Extract circulars from the response
+            # Initialize an empty list to store circulars
             circulars = []
-            
+
             if data_circulars.get('response') is None:
-                # Either render the page without data
+                # Render the page without data if no response is found
                 messages.error(request, "NO DATA FOUND")
                 return render(request, 'city_school/assignment.html', {'circulars': []})
-            
-            for key, item in data_circulars.get('response', {}).items():
-                circulars.append({
-                    "id": item['id'],
-                    "type": item['type'],
-                    'date': item['date'],
-                    'description': item['description'],
-                    'pdf_link': f"https://www.mispack.in/app/application/main/{item['uid']}"
-                })
+
+            response_data = data_circulars.get('response', {})
+            print(response_data)
+
+            if isinstance(response_data, list):
+                # Handle the case where response is a list
+                for item in response_data:
+                    circulars.append({
+                        "id": item['id'],
+                        "type": item['type'],
+                        'date': item['date'],
+                        'description': item['description'],
+                        'pdf_link': f"https://www.mispack.in/app/application/main/{item['uid']}"
+                    })
+            elif isinstance(response_data, dict):
+                # Handle the case where response is a dictionary
+                for key, item in response_data.items():
+                    circulars.append({
+                        "id": item['id'],
+                        "type": item['type'],
+                        'date': item['date'],
+                        'description': item['description'],
+                        'pdf_link': f"https://www.mispack.in/app/application/main/{item['uid']}"
+                    })
 
             # Prepare the context to pass to the template
             context = {'circulars': circulars}
-            
-            # print(context)
-            
-            # print(context)
 
             # Send POST request to update message count API
             api_params_update_message_count = {
