@@ -647,7 +647,7 @@ def Assignment(request):
                 return render(request, 'city_school/assignment.html', {'circulars': []})
 
             response_data = data_circulars.get('response', {})
-            print(response_data)
+            # print(response_data)
 
             if isinstance(response_data, list):
                 # Handle the case where response is a list
