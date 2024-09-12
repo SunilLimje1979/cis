@@ -1217,14 +1217,14 @@ def Imagespecific(request):
 ##################################### Imagespecific Page ##################################################################
 def Logout(request):
     # Clear all sessions
-    request.session.clear()
+    # request.session.clear()
     # Redirect to the login page
     return redirect('exit')
 
 ##################################### Imagespecific Page ##################################################################
 def exit(request):
     # Clear all sessions
-    request.session.clear()
+    # request.session.clear()
     # Redirect to the login page
     return render(request,'city_school/exit.html')
 ##################################### PDF DEMO ##################################################################
