@@ -1,12 +1,12 @@
 {% load static %}
-{% load pwa %} 
+{% load pwa %}
 {% comment %} {% progressive_web_app_meta %} {% endcomment %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="manifest" href="{% static "assets/manifest.json" %}">
+<link rel="manifest" href="{% static 'assets/manifest.json' %}">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>User Profile</title>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -41,7 +41,7 @@
   .user-list {
     list-style-type: none;
     padding: 0;
-    padding-top: 50px;
+    padding-top: 60px;
   }
 
   .user-item {
@@ -50,7 +50,7 @@
     padding-right: 4px;
     border-radius: 8px;
     border-bottom: 1px solid rgba(204, 204, 204, 0.9);
-    cursor: pointer; /* Add cursor pointer for better UX */
+    cursor: pointer;
   }
 
   .user-info {
@@ -78,27 +78,21 @@
     color: rgba(0, 0, 0, 0.7);
     font-size: 34px;
     margin-left: auto;
-    margin-bottom: 0;
-    cursor: pointer; /* Add cursor pointer for better UX */
+    cursor: pointer;
   }
 
   .description {
     color: rgba(0, 0, 0, 0.7);
-    margin-top: 0;
-    margin-left: 0;
     font-size: 14px;
     font-weight: bold;
-    padding: 0;
     margin-bottom: 25px;
   }
 
-  /* Remove underline from anchor tags */
   .user-item a {
     text-decoration: none;
     color: inherit;
   }
 
-  /* Style anchor tag on hover */
   .user-item a:hover {
     text-decoration: none;
     color: inherit;
@@ -111,29 +105,28 @@
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: rgb(57,159,34);">
   <a class="navbar-brand" href="{% url 'dashboard' %}">
     <i class="fa fa-arrow-left" aria-hidden="true"></i>
-    <span class="nav_text" style="font-weight: bold;">MEDIA</span>
+    <span class="nav_text">MEDIA</span>
   </a>
 </nav>
 
 <div class="container">
   <ul class="user-list">
-    <!-- Loop over circulars -->
     {% for circular in circulars %}
     <li class="user-item" id="pdf-icon-{{ forloop.counter }}">
       <div class="user-info">
         <div class="book-icon">
-          <i class="fas fa-file-video" style="color: white; background-color: rgb(237, 112, 20); width: 40px; height: 40px; display: inline-block; text-align: center; line-height: 30px; font-size: 24px; padding: 5px;"></i><!-- Video file icon -->
+          <i class="fas fa-file-video" style="color: white; background-color: rgb(237, 112, 20); width: 40px; height: 40px; display: inline-block; text-align: center; line-height: 40px; font-size: 24px; padding: 5px;"></i>
         </div>
         <div class="user-date">{{ circular.date }}</div>
         <div class="pdf-icon">
           {% if circular.pdf_link %}
-            {% if circular.pdf_link|slice:'-4:' == '.pdf' %}
-              <i class="far fa-file-pdf"></i> <!-- PDF icon -->
+            {% if circular.pdf_link|slice:"-4:" == ".pdf" %}
+              <i class="far fa-file-pdf"></i>
             {% else %}
-            <i class="fa-solid fa-images" style="font-size: 28px;"></i> <!-- Default icon for other file types -->
+              <i class="fa-solid fa-images" style="font-size: 28px;"></i>
             {% endif %}
           {% else %}
-          <i class="fa-solid fa-images" style="font-size: 28px;"></i>  <!-- Default icon for no PDF link -->
+            <i class="fa-solid fa-images" style="font-size: 28px;"></i>
           {% endif %}
         </div>
       </div>
@@ -142,8 +135,26 @@
       </div>
     </li>
     {% endfor %}
-    <!-- End loop -->
   </ul>
+</div>
+
+<!-- Modal for PDF Options -->
+<div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="pdfModalLabel">Choose an Action</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>What would you like to do with this document?</p>
+        <button type="button" class="btn btn-primary" id="openInGDrive" style="margin-bottom: 10px;">Open in Google Drive</button>
+        <button type="button" class="btn btn-success" id="downloadPdf">Download as PDF</button>
+      </div>    
+    </div>
+  </div>
 </div>
 
 {% if messages %}
@@ -159,41 +170,63 @@
 </div>
 {% endif %}
 
-<script src="https://kit.fontawesome.com/a076d05399.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
   $(document).ready(function() {
+    let currentPdfUrl = '';
+
+    const gcmId = '{{ request.session.gcm_id }}';
+    const iosId = "{{ request.session.ios_id }}";
+
+    console.log('GCM ID:', gcmId);
+    console.log('iOS ID:', iosId);
+
     {% for circular in circulars %}
-    $('#pdf-icon-{{ forloop.counter }}').on('click', function() {
+    $('#pdf-icon-{{ forloop.counter }} .pdf-icon').on('click', function() {
       const pdfUrl = "{{ circular.pdf_link }}";
       const fileExtension = pdfUrl.split('.').pop().toLowerCase();
 
       if (fileExtension === 'pdf') {
-        // Direct download for PDF files
-        alert("Your download will start now.");
-        const link = document.createElement("a");
-        link.href = pdfUrl;
-        link.download = "document.pdf"; // specify the filename
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        currentPdfUrl = pdfUrl; // Store PDF URL
+        
+        if (iosId) {
+          alert("Your download will start now.");
+          const link = document.createElement("a");
+          link.href = pdfUrl;
+          link.download = "document.pdf";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          $('#pdfModal').modal('show');
+        }
       } else {
-        // Handle navigation for other file types (assuming it's an image)
         window.location.href = "{% url 'photo' circular.id %}";
       }
     });
     {% endfor %}
 
-    // Function to close the alert when close button is clicked
-    $('.alert .close').on('click', function() {
-      $(this).parent().fadeOut('slow');
+    $('#openInGDrive').on('click', function() {
+      const driveUrl = `https://drive.google.com/viewerng/viewer?url=${currentPdfUrl}`;
+      window.open(driveUrl, '_blank');
+      $('#pdfModal').modal('hide');
     });
 
-    // Automatically close messages after 5 seconds
+    $('#downloadPdf').on('click', function() {
+      const link = document.createElement("a");
+      link.href = currentPdfUrl;
+      link.download = "document.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      $('#pdfModal').modal('hide');
+    });
+
     setTimeout(function() {
       $('.alert').fadeOut('slow');
-    }, 5000);
+    }, 10000);
   });
 </script>
 </body>
