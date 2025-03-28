@@ -76,9 +76,15 @@
           <div class="row justify-content-center" style="padding-top: 30px; padding-bottom: 3px;">
             <button type="submit" class="btn btn-success custom-btn" style="font-size: 15px; padding: 8px 18px; border-radius: 30px; background-color: rgb(57,159,34);">Request OTP</button>
         </div>
-        
-        
-          <p class="text-muted mt-3">Please ensure that your mobile is in coverage of OTP.</p>
+
+        <p class="text-muted mt-3">Please ensure that your mobile is in coverage of OTP.</p>
+
+        {% if ios_id != "0" %}
+          <div class="row justify-content-center" style="padding-top: 10px;">
+              <textarea class="form-control" rows="3" readonly>{{ ios_id }}</textarea>
+          </div>
+        {% endif %}
+
           {% if messages %}
           <div id="messages-container" class="messages">
             {% for message in messages %}
