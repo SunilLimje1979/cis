@@ -8,12 +8,12 @@ import base64
 import json
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import messages
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from barcode import Code128
 
 
 # Suppress SSL warnings
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 ##################################### Log In Page ##################################################################
