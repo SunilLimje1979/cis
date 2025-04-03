@@ -634,6 +634,7 @@ def Attendance(request):
 #         # Handle connection or request errors
 #         return render(request, 'error.html', {'message': f'Error: {e}'})
 
+
 def Circular(request):
     # Retrieve student data from session
     student_data = request.session.get('student_data', {})
