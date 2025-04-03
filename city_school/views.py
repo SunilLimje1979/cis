@@ -1191,10 +1191,10 @@ def Pdf(request):
 
 ##################################### Photo Page ##################################################################
 import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
-# Suppress SSL warnings
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# # Suppress SSL warnings
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 def Photo(request, circular_id):
     # API endpoint for fetching post details
