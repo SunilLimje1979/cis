@@ -8,12 +8,12 @@ import base64
 import json
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import messages
-# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from barcode import Code128
 
 
 # Suppress SSL warnings
-# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 ##################################### Log In Page ##################################################################
@@ -588,26 +588,13 @@ def Circular(request):
             # } for circular in data_circulars.get('response', [])]
             
             # Extract circulars from the response
-            # circulars = [{
-            #     "id":data_circulars['response'][key]['id'],
-            #     "type": data_circulars['response'][key]['type'],
-            #     'date': data_circulars['response'][key]['date'],
-            #     'description': data_circulars['response'][key]['description'],
-            #     'pdf_link': f"https://www.mispack.in/app/application/main/{data_circulars['response'][key]['uid']}"
-            # } for key in data_circulars.get('response', {}).keys()]
-            
-            # Extract circulars from the response
-            if isinstance(data_circulars.get('response'), list):
-                circulars = [{
-                    "id": circular.get('id', ''),
-                    "type": circular.get('type', ''),
-                    "date": circular.get('date', ''),
-                    "description": circular.get('description', ''),
-                    "pdf_link": f"https://www.mispack.in/app/application/main/{circular.get('uid', '')}"
-                } for circular in data_circulars.get('response', [])]
-            else:
-                circulars = []
-
+            circulars = [{
+                "id":data_circulars['response'][key]['id'],
+                "type": data_circulars['response'][key]['type'],
+                'date': data_circulars['response'][key]['date'],
+                'description': data_circulars['response'][key]['description'],
+                'pdf_link': f"https://www.mispack.in/app/application/main/{data_circulars['response'][key]['uid']}"
+            } for key in data_circulars.get('response', {}).keys()]
 
             # print(circulars)
             # Prepare the context to pass to the template
@@ -1191,10 +1178,10 @@ def Pdf(request):
 
 ##################################### Photo Page ##################################################################
 import requests
-# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
-# # Suppress SSL warnings
-# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# Suppress SSL warnings
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 def Photo(request, circular_id):
     # API endpoint for fetching post details
