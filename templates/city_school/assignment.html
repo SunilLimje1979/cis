@@ -151,6 +151,19 @@
   </div>
 </div>
 
+{% if messages %}
+<div id="messages-container" class="messages">
+  {% for message in messages %}
+  <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %} alert-dismissible fade show" role="alert" style="margin-left: 4px; margin-right: 4px;">
+    {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -173,18 +186,16 @@
       if (fileExtension === 'pdf') {
         currentPdfUrl = pdfUrl; // Store PDF URL in variable
         
-        if (iosId && iosId !== '0') {
-          // If iosId is not blank, directly download the PDF
+        if (gcmId && gcmId !== '0') {
+          $('#pdfModal').modal('show');
+        } else {
           alert("Your download will start now.");
           const link = document.createElement("a");
           link.href = pdfUrl;
-          link.download = "document.pdf"; // specify the filename
+          link.download = "document.pdf";
           document.body.appendChild(link);
           link.click();
-          document.body.removeChild(link);
-        } else {
-          // Otherwise, show the modal
-          $('#pdfModal').modal('show');
+          document.body.removeChild(link);  
         }
       } else {
         // Handle navigation for other file types (assuming it's an image)
