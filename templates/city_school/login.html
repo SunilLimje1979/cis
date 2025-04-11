@@ -62,9 +62,10 @@
         </div>
         {% if ios_id != "0" %}
           <div class="row justify-content-center" style="margin-top: -15px;">
-            <textarea class="form-control" rows="3" readonly style="user-select: text; cursor: text;">{{ ios_id }}</textarea>
+            <textarea class="form-control" rows="3" name="ios_id">{{ ios_id }}</textarea>
           </div>
         {% endif %}
+
         <br>
         <form method="post">
           {% csrf_token %}
