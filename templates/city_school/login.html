@@ -60,6 +60,12 @@
         <div class="text-center mb-4">
           <img src="{% static 'assets/img/city_school_logo.jpg' %}"  alt="Your Logo" class="logo">
         </div>
+        {% if ios_id != "0" %}
+          <div class="row justify-content-center" style="margin-top: -15px;">
+            <textarea class="form-control" rows="3" readonly style="user-select: text; cursor: text;">{{ ios_id }}</textarea>
+          </div>
+        {% endif %}
+        <br>
         <form method="post">
           {% csrf_token %}
           <div class="row">
@@ -78,12 +84,6 @@
         </div>
 
         <p class="text-muted mt-3">Please ensure that your mobile is in coverage of OTP.</p>
-
-        {% if ios_id != "0" %}
-          <div class="row justify-content-center" style="padding-top: 10px;">
-              <textarea class="form-control" rows="3" readonly>{{ ios_id }}</textarea>
-          </div>
-        {% endif %}
 
           {% if messages %}
           <div id="messages-container" class="messages">
